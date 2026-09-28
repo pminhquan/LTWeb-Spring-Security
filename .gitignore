@@ -1,0 +1,25 @@
+@"
+# Build
+target/
+*/target/
+
+# IntelliJ
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+.env.*
+application-local.properties
+**/application-local.properties
+
+# Teacher reference files
+reference/
+"@ | Set-Content .gitignore
