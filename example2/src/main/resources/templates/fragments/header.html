@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+<header th:fragment="header" class="topbar">
+    <nav class="nav-container">
+        <div class="brand">
+            <a th:href="@{/home}">UTEShop</a>
+        </div>
+        <div th:if="${#authorization.expression('isAuthenticated()')}" class="user-nav">
+            <!-- Avatar -->
+            <img th:src="${#authentication.principal.images != null and !#strings.isEmpty(#authentication.principal.images) ? #authentication.principal.images : '/images/avatar-default.png'}"
+                 alt="Avatar"
+                 width="40"
+                 height="40"
+                 class="user-avatar"
+                 style="border-radius: 50%; object-fit: cover; vertical-align: middle;">
+            <!-- Full name -->
+            <span class="user-fullname" th:text="${#authentication.principal.fullName}">Nguyễn Văn A</span>
+            <!-- Username -->
+            <span class="user-username" th:text="'(' + ${#authentication.principal.username} + ')'">(user01)</span>
+            <!-- Email -->
+            <span class="user-email" th:text="${#authentication.principal.email}">user01@gmail.com</span>
+            <!-- Role -->
+            <span class="user-role badge" th:text="${#authentication.principal.role}">ROLE_USER</span>
+            <!-- Logout -->
+            <form th:action="@{/logout}" method="post" style="display:inline">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <button type="submit" class="btn btn-logout">Đăng xuất</button>
+            </form>
+        </div>
+        <div th:unless="${#authorization.expression('isAuthenticated()')}">
+            <a th:href="@{/login}" class="btn btn-login">Đăng nhập</a>
+        </div>
+    </nav>
+</header>
+</body>
+</html>

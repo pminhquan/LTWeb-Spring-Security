@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <title>Trang chủ</title>
+</head>
+<body>
+<main layout:fragment="content" class="container">
+    <div class="card">
+        <h1>Trang chủ UTEShop</h1>
+        <p>
+            Xin chào <strong th:text="${#authentication.principal.fullName}">User</strong>
+        </p>
+
+        <div th:if="${user != null}" class="user-info-section">
+            <h3>Thông tin tài khoản (DTO)</h3>
+            <ul>
+                <li><strong>Mã định danh:</strong> <span th:text="${user.id}">1</span></li>
+                <li><strong>Tên đăng nhập:</strong> <span th:text="${user.username}">user01</span></li>
+                <li><strong>Email:</strong> <span th:text="${user.email}">user01@gmail.com</span></li>
+                <li><strong>Họ và tên:</strong> <span th:text="${user.fullName}">Nguyễn Hữu Trung</span></li>
+                <li><strong>Ảnh đại diện:</strong> <span th:text="${user.images}">/images/user.png</span></li>
+                <li><strong>Vai trò:</strong> <span th:text="${user.roleName}">ROLE_USER</span></li>
+                <li><strong>Trạng thái:</strong> <span th:text="${user.enabled ? 'Đang hoạt động' : 'Bị khóa'}">Đang hoạt động</span></li>
+            </ul>
+        </div>
+    </div>
+</main>
+</body>
+</html>
