@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang chủ</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="container">
+    <div class="card">
+        <h1>Trang chủ</h1>
+        <p>Xin chào, <strong th:text="${#authentication.principal.fullName}">Người dùng</strong>!</p>
+
+        <div th:if="${user != null}" class="user-info-section">
+            <h3>Thông tin tài khoản</h3>
+            <ul>
+                <li><strong>Mã định danh:</strong> <span th:text="${user.id}">1</span></li>
+                <li><strong>Email:</strong> <span th:text="${user.email}">user@example.com</span></li>
+                <li><strong>Họ tên:</strong> <span th:text="${user.fullName}">Nguyễn Văn A</span></li>
+                <li><strong>Vai trò:</strong> <span th:text="${user.roleName}">ROLE_USER</span></li>
+                <li><strong>Trạng thái:</strong> <span th:text="${user.enabled ? 'Đang hoạt động' : 'Đã khóa'}">Đang hoạt động</span></li>
+            </ul>
+        </div>
+    </div>
+</main>
+</body>
+</html>
