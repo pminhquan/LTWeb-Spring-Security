@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layouts/layout :: head('Có lỗi xảy ra')}"></head>
+<body>
+<div class="auth-page">
+    <div class="auth-card text-center">
+        <div class="error-status-badge" th:text="${statusCode != null ? statusCode : '500'}">500</div>
+        <h1 th:text="${statusCode == 403 ? 'Từ chối truy cập' : (statusCode == 404 ? 'Không tìm thấy trang' : 'Có lỗi xảy ra')}">Có lỗi xảy ra</h1>
+        <p class="error-desc" th:text="${message != null ? message : 'Đã xảy ra lỗi hệ thống.'}">Đã xảy ra lỗi hệ thống.</p>
+        <div th:if="${errorDetail != null and errorDetail != ''}" class="note error-detail" th:text="${errorDetail}"></div>
+        <div class="modal-actions justify-center mt-4">
+            <button type="button" class="button secondary" onclick="history.back()">&laquo; Quay lại</button>
+            <a class="button" th:href="@{/}">Về trang chủ</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

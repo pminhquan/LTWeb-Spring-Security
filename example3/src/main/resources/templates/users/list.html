@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layouts/layout :: head('Users')}"></head>
+<body>
+<div th:replace="~{layouts/layout :: page(~{::main})}">
+<main>
+    <div class="page-header">
+        <h1>Quản lý Users</h1>
+    </div>
+    <div th:if="${success}" class="alert success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert error" th:text="${error}"></div>
+    <div class="toolbar">
+        <form th:action="@{/users}" method="get">
+            <input name="keyword" th:value="${keyword}" placeholder="Username, email, họ tên...">
+            <input type="hidden" name="size" th:value="${size}">
+            <button class="button" type="submit">Tìm kiếm</button>
+        </form>
+        <a class="button" th:href="@{/users/create}">+ Thêm User</a>
+    </div>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th class="col-id">ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Họ tên</th>
+                    <th class="col-role">Role</th>
+                    <th class="col-status">Trạng thái</th>
+                    <th class="col-id">Products</th>
+                    <th class="col-action">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="u : ${users.content}">
+                    <td class="text-center" th:text="${u.id}"></td>
+                    <td th:text="${u.username}"></td>
+                    <td th:text="${u.email}"></td>
+                    <td th:text="${u.fullName}"></td>
+                    <td class="text-center">
+                        <span class="badge"
+                              th:classappend="${u.roleName == 'ROLE_ADMIN' ? 'badge-admin' : 'badge-user'}"
+                              th:text="${#strings.replace(u.roleName, 'ROLE_', '')}"></span>
+                    </td>
+                    <td class="text-center">
+                        <span th:classappend="${u.enabled ? 'status-active' : 'status-inactive'}"
+                              th:text="${u.enabled ? 'ACTIVE' : 'INACTIVE'}"></span>
+                    </td>
+                    <td class="text-center" th:text="${u.productCount}"></td>
+                    <td class="actions">
+                        <a class="btn-action edit" th:href="@{/users/edit/{id}(id=${u.id})}">Edit</a>
+                        <button type="button" class="btn-action danger"
+                                th:attr="data-id=${u.id}, data-username=${u.username}"
+                                onclick="openDeleteUserModal(this.getAttribute('data-id'), this.getAttribute('data-username'))">Delete</button>
+                    </td>
+                </tr>
+                <tr th:if="${users.empty}">
+                    <td colspan="8" class="text-center">Không có dữ liệu.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination" th:if="${users.totalPages > 1}">
+        <a th:if="${users.hasPrevious()}" th:href="@{/users(page=${users.number - 1}, size=${size}, keyword=${keyword})}">«</a>
+        <span th:each="i : ${#numbers.sequence(0, users.totalPages - 1)}">
+            <a th:classappend="${i == users.number ? 'active' : ''}"
+               th:href="@{/users(page=${i}, size=${size}, keyword=${keyword})}"
+               th:text="${i + 1}"></a>
+        </span>
+        <a th:if="${users.hasNext()}" th:href="@{/users(page=${users.number + 1}, size=${size}, keyword=${keyword})}">»</a>
+    </div>
+
+    <!-- Native accessible delete confirmation modal -->
+    <dialog id="deleteUserModal" class="native-modal" aria-labelledby="deleteUserModalTitle" aria-describedby="deleteUserModalDesc">
+        <div class="modal-box">
+            <h3 id="deleteUserModalTitle">Xác nhận xóa user</h3>
+            <p id="deleteUserModalDesc">Bạn có chắc chắn muốn xóa user <strong id="deleteUserName"></strong> (ID: <span id="deleteUserId"></span>)? Thao tác này không thể hoàn tác.</p>
+            <form id="deleteUserForm" method="post" th:action="@{/users/delete/0}" th:attr="data-base-url=@{/users/delete/}">
+                <div class="modal-actions">
+                    <button type="button" class="button secondary" onclick="closeDeleteUserModal()">Hủy</button>
+                    <button type="submit" class="button danger">Xóa</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+    <script>
+        function openDeleteUserModal(id, username) {
+            const modal = document.getElementById('deleteUserModal');
+            const form = document.getElementById('deleteUserForm');
+            const nameEl = document.getElementById('deleteUserName');
+            const idEl = document.getElementById('deleteUserId');
+            if (form) {
+                form.action = form.getAttribute('data-base-url') + id;
+            }
+            if (nameEl) nameEl.textContent = username;
+            if (idEl) idEl.textContent = id;
+            if (modal && typeof modal.showModal === 'function') {
+                modal.showModal();
+            }
+        }
+        function closeDeleteUserModal() {
+            const modal = document.getElementById('deleteUserModal');
+            if (modal && typeof modal.close === 'function') {
+                modal.close();
+            }
+        }
+        document.getElementById('deleteUserModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDeleteUserModal();
+            }
+        });
+    </script>
+</main>
+</div>
+</body>
+</html>

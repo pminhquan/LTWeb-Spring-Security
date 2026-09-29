@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layouts/layout :: head('Dashboard')}"></head>
+<body>
+<div th:replace="~{layouts/layout :: page(~{::main})}">
+<main>
+    <div class="page-header">
+        <h1>Dashboard</h1>
+    </div>
+    <div th:if="${success}" class="alert success" th:text="${success}"></div>
+
+    <!-- Stat Cards -->
+    <div class="cards">
+        <div class="card">
+            <span class="card-subtitle">Tổng người dùng</span>
+            <strong th:text="${userCount}">0</strong>
+            <span class="card-meta">Tất cả tài khoản hệ thống</span>
+        </div>
+        <div class="card">
+            <span class="card-subtitle">Regular Users</span>
+            <strong th:text="${regularUserCount}">0</strong>
+            <span class="badge badge-user">ROLE_USER</span>
+        </div>
+        <div class="card">
+            <span class="card-subtitle">Administrators</span>
+            <strong th:text="${adminCount}">0</strong>
+            <span class="badge badge-admin">ROLE_ADMIN</span>
+        </div>
+        <div class="card">
+            <span class="card-subtitle">Tổng sản phẩm</span>
+            <strong th:text="${productCount}">0</strong>
+            <span class="card-meta">Sản phẩm trong danh mục</span>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-links">
+        <a class="button" th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/products}">Quản lý Products</a>
+        <a class="button" th:unless="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/products}">Xem danh sách Products</a>
+        <a class="button secondary" th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/products/create}">+ Thêm Product</a>
+        <a class="button" th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/users}">Quản lý Users</a>
+        <a class="button secondary" th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/users/create}">+ Thêm User</a>
+    </div>
+
+    <!-- Recent Products Section -->
+    <div class="dashboard-section mt-4">
+        <div class="section-header">
+            <h2>Sản phẩm mới nhất</h2>
+            <a th:href="@{/products}" class="view-all-link">Xem tất cả sản phẩm &rarr;</a>
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="col-id">ID</th>
+                        <th class="col-thumb">Ảnh</th>
+                        <th class="col-name">Tên sản phẩm</th>
+                        <th class="col-price">Giá</th>
+                        <th class="col-user">Người tạo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p : ${recentProducts}">
+                        <td class="text-center" th:text="${p.id}"></td>
+                        <td class="text-center">
+                            <img th:if="${p.imageUrl != null and p.imageUrl != ''}"
+                                 th:src="${#strings.contains(p.imageUrl, '|') ? #strings.substringBefore(p.imageUrl, '|') : p.imageUrl}"
+                                 class="thumb" alt="Product image">
+                            <span th:if="${p.imageUrl == null or p.imageUrl == ''}" class="no-image">No image</span>
+                        </td>
+                        <td class="col-name" th:text="${p.name}"></td>
+                        <td class="col-price" th:text="${p.price != null ? #numbers.formatDecimal(p.price, 0, 'COMMA', 2, 'POINT') + ' đ' : '0 đ'}"></td>
+                        <td th:text="${p.username}"></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(recentProducts)}">
+                        <td colspan="5" class="text-center">Chưa có sản phẩm nào.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Users Section (Admin only) -->
+    <div class="dashboard-section mt-4" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+        <div class="section-header">
+            <h2>Người dùng mới nhất</h2>
+            <a th:href="@{/users}" class="view-all-link">Xem tất cả người dùng &rarr;</a>
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="col-id">ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Họ tên</th>
+                        <th class="col-role">Role</th>
+                        <th class="col-status">Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="u : ${recentUsers}">
+                        <td class="text-center" th:text="${u.id}"></td>
+                        <td th:text="${u.username}"></td>
+                        <td th:text="${u.email}"></td>
+                        <td th:text="${u.fullName}"></td>
+                        <td class="text-center">
+                            <span class="badge"
+                                  th:classappend="${u.roleName == 'ROLE_ADMIN' ? 'badge-admin' : 'badge-user'}"
+                                  th:text="${#strings.replace(u.roleName, 'ROLE_', '')}"></span>
+                        </td>
+                        <td class="text-center">
+                            <span th:classappend="${u.enabled ? 'status-active' : 'status-inactive'}"
+                                  th:text="${u.enabled ? 'ACTIVE' : 'INACTIVE'}"></span>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(recentUsers)}">
+                        <td colspan="6" class="text-center">Chưa có người dùng nào.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+</div>
+</body>
+</html>
