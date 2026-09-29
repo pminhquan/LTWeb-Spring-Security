@@ -14,10 +14,12 @@ import lombok.NoArgsConstructor;
 @Builder
 public class RegisterDTO {
     @NotBlank(message = "Username không được để trống")
+    @Size(max = 50)
     private String username;
 
     @NotBlank(message = "Email không được để trống")
     @Email(message = "Email không hợp lệ")
+    @Size(max = 150)
     private String email;
 
     @NotBlank(message = "Mật khẩu không được để trống")
@@ -28,5 +30,6 @@ public class RegisterDTO {
     private String confirmPassword;
 
     @NotBlank(message = "Họ tên không được để trống")
+    @Size(max = 500)
     private String fullName;
 }

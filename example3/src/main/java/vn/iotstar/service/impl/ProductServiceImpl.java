@@ -52,6 +52,7 @@ public class ProductServiceImpl implements ProductService {
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User không tồn tại"));
         Product product = mapper.toEntity(dto);
+        product.setImageUrl(null);
         product.setUser(user);
         if (image != null && !image.isEmpty()) {
             CloudinaryUploadResult r = cloudinaryService.upload(image);

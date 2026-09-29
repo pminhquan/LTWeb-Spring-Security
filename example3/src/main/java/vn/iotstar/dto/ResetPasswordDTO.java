@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class ResetPasswordDTO {
     @NotBlank
     @Email
+    @Size(max = 150)
     private String email;
 
     @NotBlank

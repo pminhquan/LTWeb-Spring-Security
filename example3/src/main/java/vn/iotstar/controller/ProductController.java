@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -19,6 +20,11 @@ import vn.iotstar.service.ProductService;
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
+
+    @InitBinder("productDTO")
+    void protectImageUrl(WebDataBinder binder) {
+        binder.setDisallowedFields("imageUrl");
+    }
 
     @GetMapping
     public String list(@RequestParam(defaultValue = "") String keyword,
